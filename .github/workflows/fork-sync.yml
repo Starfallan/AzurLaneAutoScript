@@ -13,6 +13,7 @@ jobs:
     steps:
       - uses: tgymnich/fork-sync@v2.0.10
         with:
+          token: ${{ secrets.PERSONAL_TOKEN }}
           owner: Starfallan
           base: master
           head: master
