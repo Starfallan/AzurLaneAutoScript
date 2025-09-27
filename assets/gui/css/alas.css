@@ -308,14 +308,15 @@ pre.rich-traceback-code {
     padding-top: 3px;
     margin-top: auto;
     margin-bottom: auto;
-}
+} 
 
 #pywebio-scope-header_status > div > div + div + p {
     margin: 0;
 }
 
 .anim-rotate {
-    animation: rotate-keyframes 0.4s linear infinite
+    animation: rotate-keyframes 0.4s linear infinite;
+    transform-origin: 48% 55%;
 }
 
 @keyframes rotate-keyframes {
