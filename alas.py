@@ -483,6 +483,11 @@ class AzurLaneAutoScript:
                 logger.info(f'Wait until {task.next_run} for task `{task.command}`')
                 self.is_first_task = False
                 method = self.config.Optimization_WhenTaskQueueEmpty
+                # 如果任务在三分钟内执行，改为前往主界面而不是关闭游戏
+                time_to_next = task.next_run - datetime.now()
+                if time_to_next <= timedelta(minutes=3):
+                    logger.info(f'Task will run in {time_to_next.total_seconds():.0f} seconds, switch to goto_main instead of close_game')
+                    method = 'goto_main'
                 if method == 'close_game':
                     logger.info('Close game during wait')
                     self.device.app_stop()
