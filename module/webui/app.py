@@ -150,9 +150,10 @@ class AlasGUI(Frame):
             onclick=[lambda: go_app("manage", new_window=False)],
         )
 
-        current_date = datetime.now().date()
-        if current_date.month == 4 and current_date.day == 1:
-            self.af_flag = True
+        # current_date = datetime.now().date()
+        # if current_date.month == 4 and current_date.day == 1:
+        # Set to alaways true to show animation every time
+        self.af_flag = True
 
     @use_scope("aside_instance")
     def set_aside_status(self) -> None:

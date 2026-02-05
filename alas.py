@@ -483,6 +483,11 @@ class AzurLaneAutoScript:
                 logger.info(f'Wait until {task.next_run} for task `{task.command}`')
                 self.is_first_task = False
                 method = self.config.Optimization_WhenTaskQueueEmpty
+                # 如果任务在三分钟内执行，改为前往主界面而不是关闭游戏
+                time_to_next = task.next_run - datetime.now()
+                if time_to_next <= timedelta(minutes=3):
+                    logger.info(f'Task will run in {time_to_next.total_seconds():.0f} seconds, switch to goto_main instead of close_game')
+                    method = 'goto_main'
                 if method == 'close_game':
                     logger.info('Close game during wait')
                     self.device.app_stop()
@@ -568,8 +573,8 @@ class AzurLaneAutoScript:
             failed = deep_get(self.failure_record, keys=task, default=0)
             failed = 0 if success else failed + 1
             deep_set(self.failure_record, keys=task, value=failed)
-            if failed >= 3:
-                logger.critical(f"Task `{task}` failed 3 or more times.")
+            if failed >= 5:
+                logger.critical(f"Task `{task}` failed 5 or more times.")
                 logger.critical("Possible reason #1: You haven't used it correctly. "
                                 "Please read the help text of the options.")
                 logger.critical("Possible reason #2: There is a problem with this task. "
@@ -578,7 +583,7 @@ class AzurLaneAutoScript:
                 handle_notify(
                     self.config.Error_OnePushConfig,
                     title=f"Alas <{self.config_name}> crashed",
-                    content=f"<{self.config_name}> RequestHumanTakeover\nTask `{task}` failed 3 or more times.",
+                    content=f"<{self.config_name}> RequestHumanTakeover\nTask `{task}` failed 5 or more times.",
                 )
                 exit(1)
 
