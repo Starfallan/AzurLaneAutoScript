@@ -107,7 +107,7 @@ class PriceOcr(Digit):
         image = super().pre_process(image)
         return image
 
-PRICE_OCR = PriceOcr([], letter=(255, 255, 255), threshold=128, name='Price_ocr')
+PRICE_OCR = PriceOcr([], letter=(221, 221, 221), threshold=128, name='Price_ocr')
 
 
 URPT_PRICE_IN_PT = 150  # 1 URpt costs 150 pt
