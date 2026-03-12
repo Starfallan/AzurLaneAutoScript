@@ -186,7 +186,7 @@ class Updater(DeployConfig, GitManager, PipManager):
 
     @retry(ExecutionError, tries=3, delay=5, logger=None)
     def git_install(self):
-        return super().git_install()
+        return super().git_install(force=True)
 
     @retry(ExecutionError, tries=3, delay=5, logger=None)
     def pip_install(self):

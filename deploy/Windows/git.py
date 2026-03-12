@@ -126,10 +126,10 @@ class GitManager(DeployConfig):
         client.logger = logger
         return client
 
-    def git_install(self):
+    def git_install(self, force=False):
         logger.hr('Update Alas', 0)
 
-        if not self.AutoUpdate:
+        if not force and not self.AutoUpdate:
             logger.info('AutoUpdate is disabled, skip')
             Progress.GitShowVersion()
             return
