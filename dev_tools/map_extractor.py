@@ -372,6 +372,9 @@ class MapData:
             else:
                 self.map_data_loop = None
 
+
+
+
             # portal
             self.portal = []
             # if self.map_id in MAP_EVENT_LIST:
@@ -497,6 +500,7 @@ class MapData:
                 if effect[0] == 'enemy':
                     extracted_data.append(effect[1])
         return extracted_data
+
 
     def map_file_name(self):
         name = self.chapter_name.replace('-', '_').lower()
