@@ -21,8 +21,8 @@ MAP.map_data = """
 MAP.weight_data = """
     50 50 50 50 50 50 50 50 50 50 50
     50 50 50 50 50 50 50 50 50 50 50
-    50 50 40 40 40 40 50 50 50 50 50
-    50 50 50 50 50 40 40 40 50 50 50
+    50 50 50 50 50 50 50 50 50 50 50
+    50 50 50 50 50 50 50 50 50 50 50
     50 50 50 50 50 50 50 50 50 50 50
     50 50 50 50 50 50 50 50 50 50 50
 """
@@ -60,17 +60,38 @@ class Config(ConfigBase):
 class Campaign(CampaignBase):
     MAP = MAP
 
+    def map_init(self, map_):
+        super().map_init(map_)
+        if self.use_support_fleet and self.map_is_clear_mode:
+            self.map_has_mob_move = True
+            if self.fleet_boss_index == 2:
+                self.FUNCTION_NAME_BASE = 'loop_battle_'
+        else:
+            self.map_has_mob_move = False
+
+    def loop_battle_0(self):
+        if not self.mob_move(C3, C2):
+            self.FUNCTION_NAME_BASE = 'battle_'
+            return self.battle_0()
+        self.fleet_boss.goto(J1)
+        self.fleet_ensure(index=3 - self.fleet_boss_index)
+        if self.clear_filter_enemy(self.ENEMY_FILTER, preserve=0):
+            return True
+        return self.battle_default()
+
+    def loop_battle_1(self):
+        if self.clear_filter_enemy(self.ENEMY_FILTER, preserve=0):
+            return True
+        return self.battle_default()
+
+    def loop_battle_5(self):
+        return self.fleet_boss.clear_boss()
+
     def battle_0(self):
-        self.clear_chosen_enemy(C3)
-        return True
-
-    def battle_1(self):
-        if self.use_support_fleet and not self.map_is_clear_mode:
-            self.air_strike(E3)
-        self.clear_chosen_enemy(D3)
-        return True
-
-    def battle_2(self):
+        if self.battle_count == 1:
+            if self.use_support_fleet and not self.map_is_clear_mode:
+                self.goto(C3)
+                self.air_strike(E3)
         if self.clear_roadblocks([road_main]):
             return True
         if self.clear_potential_roadblocks([road_main]):
