@@ -490,6 +490,7 @@
       "LDPlayer3": "LD Player 3",
       "LDPlayer4": "LD Player 4",
       "LDPlayer9": "LD Player 9",
+      "LDPlayer14": "LDPlayer 14",
       "MuMuPlayer": "MuMu Player",
       "MuMuPlayerX": "MuMu Player X",
       "MuMuPlayer12": "MuMu Player 12",
@@ -1250,6 +1251,20 @@
       "help": "When running 7x24, prevent having a lot of urgent commissions and not being able to complete daily commissions. It is recommended to select only short-terms and high-yields in the commission filter"
     }
   },
+  "EquipmentCode": {
+    "_info": {
+      "name": "Gear Code",
+      "help": ""
+    },
+    "ExportToConfig": {
+      "name": "Export to config",
+      "help": "Only exports if corresponding key has no value. Delete specific row to trigger later update."
+    },
+    "Config": {
+      "name": "Gear code config",
+      "help": "Format is yaml"
+    }
+  },
   "EventGeneral": {
     "_info": {
       "name": "Event General Settings",
@@ -1487,6 +1502,10 @@
     "Favorite": {
       "name": "Use Favorite Filter",
       "help": "During student selection apply the favorite filter\nThereby, giving priority to certain ship girls\nApply the favorite status to a ship girl in-game"
+    },
+    "MinLevel": {
+      "name": "Add Students with Level >= X Only",
+      "help": ""
     }
   },
   "Research": {

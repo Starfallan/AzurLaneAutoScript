@@ -225,24 +225,95 @@ class IslandProductionExtractor:
                 f.write(text + '\n')
 
 
-class IslandShopItemExtractor:
+def island_time_to_sql_time(island_time):
+    """
+    island_time is like {0: {0: 2026, 1: 2, 2: 5}, 1: {0: 12, 1: 0, 2: 0}}
+    """
+    year = island_time[0][0]
+    month = island_time[0][1]
+    day = island_time[0][2]
+    hour = island_time[1][0]
+    minute = island_time[1][1]
+    second = island_time[1][2]
+    return f'{year:04}-{month:02}-{day:02} {hour:02}:{minute:02}:{second:02}'
+
+
+
+class IslandSeason:
+    def __init__(self, season):
+        """
+        In the file 'sharecfg/island_season.lua':
+        id: serial of this season
+        time: time range of this season
+        task_list: list of tasks in this season
+        """
+        # self.id = season['id']
+        self.start_time = island_time_to_sql_time(season['time'][0])
+        self.end_time = island_time_to_sql_time(season['time'][1])
+        self.task_list = [task for _, task in season['task_list'].items()]
+
+    def encode(self):
+        data = {
+            'start_time': self.start_time,
+            'end_time': self.end_time,
+            'task_list': self.task_list,
+        }
+        return data
+
+class IslandSeasonExtractor:
     def __init__(self):
+        self.season = {}
+        data = LOADER.load('sharecfg/island_season.lua')
+        for index, item in data.items():
+            if not isinstance(index, int):
+                continue
+            # print(item['task_list'].values())
+            self.season[item['id']] = IslandSeason(item).encode()
+        # print(self.season)
+
+    def encode(self):
+        lines = []
+        lines.append('DIC_ISLAND_SEASON = {')
+        for index, season in self.season.items():
+            lines.append(f'    {index}: {season},')
+        lines.append('}')
+        return lines
+
+    def write(self, file):
+        print(f'writing {file}')
+        with open(file, 'w', encoding='utf-8') as f:
+            for text in self.encode():
+                f.write(text + '\n')
+
+    def get_latest_season_index(self):
+        return list(self.season.keys())[-1]
+
+
+
+class IslandShopItemExtractor(IslandSeasonExtractor):
+    def __init__(self):
+        super().__init__()
         self.item = {}
         data = LOADER.load('sharecfg/island_shop_goods.lua', keyword='pg.base.island_shop_goods')
+        from datetime import datetime
+        latest_season_index = self.get_latest_season_index()
+        latest_season_start_time = datetime.fromisoformat(self.season[latest_season_index]['start_time']).date()
         for index, item in data.items():
             if not isinstance(index, int) or index < 100000 or index >= 412000:
                 continue
-            try:
-                self.item[index] = {
-                    'resource_consume': {item['resource_consume'][1]: item['resource_consume'][2]},
-                    'items': {
-                        itm[1]: itm[2] for _, itm in item['items'].items()
-                    },
-                }
-                # print(self.item[index])
-            except Exception:
-                print(index, item)
-                raise
+            if item['time'] != 'always':
+
+                item_deadline = datetime.fromisoformat(island_time_to_sql_time(item['time'][1])).date()
+
+                if item_deadline <= latest_season_start_time:
+                    continue
+            self.item[index] = {
+                'resource_consume': {item['resource_consume'][1]: item['resource_consume'][2]},
+                'items': {
+                    itm[1]: itm[2] for _, itm in item['items'].items()
+                },
+            }
+
 
     def encode(self):
         lines = []
@@ -286,71 +357,11 @@ class IslandExchangeRecipeExtractor:
         return lines
 
 
-def island_time_to_sql_time(island_time):
-    """
-    island_time is like {0: {0: 2026, 1: 2, 2: 5}, 1: {0: 12, 1: 0, 2: 0}}
-    """
-    year = island_time[0][0]
-    month = island_time[0][1]
-    day = island_time[0][2]
-    hour = island_time[1][0]
-    minute = island_time[1][1]
-    second = island_time[1][2]
-    return f'{year:04}-{month:02}-{day:02} {hour:02}:{minute:02}:{second:02}'
-
-
-class IslandSeason:
-    def __init__(self, season):
-        """
-        In the file 'sharecfg/island_season.lua':
-        id: serial of this season
-        time: time range of this season
-        task_list: list of tasks in this season
-        """
-        # self.id = season['id']
-        self.end_time = island_time_to_sql_time(season['time'][1])
-        self.task_list = [task for _, task in season['task_list'].items()]
-
-    def encode(self):
-        data = {
-            'end_time': self.end_time,
-            'task_list': self.task_list,
-        }
-        return data
-
-class IslandSeasonExtractor:
-    def __init__(self):
-        self.season = {}
-        data = LOADER.load('sharecfg/island_season.lua')
-        for index, item in data.items():
-            if not isinstance(index, int):
-                continue
-            # print(item['task_list'].values())
-            self.season[item['id']] = IslandSeason(item).encode()
-        # print(self.season)
-
-    def encode(self):
-        lines = []
-        lines.append('DIC_ISLAND_SEASON = {')
-        for index, season in self.season.items():
-            lines.append(f'    {index}: {season},')
-        lines.append('}')
-        return lines
-
-    def write(self, file):
-        print(f'writing {file}')
-        with open(file, 'w', encoding='utf-8') as f:
-            for text in self.encode():
-                f.write(text + '\n')
-
-    def get_latest_season(self):
-        return list(self.season.keys())[-1]
-
 class IslandSeasonalTaskExtractor(IslandSeasonExtractor):
     def __init__(self):
         super().__init__()
         self.target_id_to_task_id = {}
-        current_season = self.get_latest_season()
+        current_season = self.get_latest_season_index()
         self.task_list = self.season[current_season]['task_list']
         print(self.task_list)
         self.task = {}
@@ -527,6 +538,14 @@ if __name__ == '__main__':
     lines.append('    4: {"refresh_times": ["03:00"], "product": {2606: 1}},')
     lines.append('    5: {"refresh_times": ["03:00"], "product": {2606: 1}},')
     lines.append('    6: {"refresh_times": ["03:00"], "product": {2606: 1}},')
+    lines.append('    1009: {"refresh_times": ["03:00"], "product": {4015: 4}},')
+    lines.append('    1010: {"refresh_times": ["03:00"], "product": {4015: 4}},')
+    lines.append('    1011: {"refresh_times": ["03:00"], "product": {4016: 8}},')
+    lines.append('    1012: {"refresh_times": ["03:00"], "product": {4016: 8}},')
+    lines.append('    1013: {"refresh_times": ["03:00"], "product": {4017: 12}},')
+    lines.append('    1014: {"refresh_times": ["03:00"], "product": {4017: 12}},')
+    lines.append('    1015: {"refresh_times": ["03:00"], "product": {4018: 4}},')
+    lines.append('    1016: {"refresh_times": ["03:00"], "product": {4018: 4}},')
     lines.append('    40101: {"refresh_times": ["03:00", "18:00"], "product": {2700: 8}},')
     lines.append('    40102: {"refresh_times": ["03:00", "18:00"], "product": {2700: 8}},')
     lines.append('    40103: {"refresh_times": ["03:00", "18:00"], "product": {2700: 8}},')

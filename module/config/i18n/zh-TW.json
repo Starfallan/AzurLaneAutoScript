@@ -490,6 +490,7 @@
       "LDPlayer3": "雷電模擬器3",
       "LDPlayer4": "雷電模擬器4",
       "LDPlayer9": "雷電模擬器9",
+      "LDPlayer14": "雷電模擬器14",
       "MuMuPlayer": "MuMu模擬器",
       "MuMuPlayerX": "MuMu模擬器X",
       "MuMuPlayer12": "MuMu模擬器12",
@@ -787,7 +788,7 @@
       "event_20251023_cn": "颶風與自由群島",
       "event_20251218_cn": "響徹於天穹之音",
       "event_20260226_cn": "春滿客棧Online",
-      "event_20260326_cn": "The Vagabond’s Recruitment Plan",
+      "event_20260326_cn": "漫遊者招募計劃",
       "raid_20200624": "特別演習埃塞克斯級(復刻)",
       "raid_20210708": "復刻穿越彼方的水線",
       "raid_20220127": "演習神秘事件調查",
@@ -1250,6 +1251,20 @@
       "help": "在7x24運行時防止緊急委託數量過多做不完每日委託，建議在委託過濾器僅選擇短時長高收益委託"
     }
   },
+  "EquipmentCode": {
+    "_info": {
+      "name": "裝備碼",
+      "help": ""
+    },
+    "ExportToConfig": {
+      "name": "導出配置",
+      "help": "若原本對應欄位有值則不會更新，請透過刪除配置中對應欄位來觸發更新"
+    },
+    "Config": {
+      "name": "具體配置",
+      "help": "格式為yaml"
+    }
+  },
   "EventGeneral": {
     "_info": {
       "name": "活動通用設定",
@@ -1486,6 +1501,10 @@
     },
     "Favorite": {
       "name": "優先選擇常用",
+      "help": ""
+    },
+    "MinLevel": {
+      "name": "僅新增等級 >= X 的角色",
       "help": ""
     }
   },
@@ -2438,6 +2457,10 @@
     "EnsureFullyCollected": {
       "name": "保證收集滿每日200信標數據",
       "help": "在收集滿為前，暫時無視保留行動力設定，需要同時開啟 \"短貓相接\""
+    },
+    "AutoCollectShip": {
+      "name": "OpsiAshBeacon.AutoCollectShip.name",
+      "help": "OpsiAshBeacon.AutoCollectShip.help"
     }
   },
   "OpsiFleetFilter": {
