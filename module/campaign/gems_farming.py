@@ -26,32 +26,6 @@ FLEET_INDEX = Digit(OCR_FLEET_INDEX, letter=(90, 154, 255), threshold=128, alpha
 SIM_VALUE = 0.92
 
 
-class GemsEmotion(Emotion):
-
-    def check_reduce(self, battle):
-        """
-        Overwrite emotion.check_reduce()
-        Check emotion before entering a campaign.
-
-        Args:
-            battle (int): Battles in this campaign
-
-        Raise:
-            CampaignEnd: Pause current task to prevent emotion control in the future.
-        """
-        if not self.is_calculate:
-            return
-
-        recovered, delay = self._check_reduce(battle)
-        if delay:
-            self.config.GEMS_EMOTION_TRIGGERED = True
-            logger.info('Detect low emotion, pause current task')
-            raise CampaignEnd('Emotion control')
-
-    def wait(self, fleet_index):
-        pass
-
-
 class GemsCampaignOverride(CampaignBase):
     def handle_combat_low_emotion(self):
         """
@@ -101,6 +75,9 @@ class GemsEmotion(Emotion):
         """
         Override Emotion.check_reduce to trigger stop condition when emotion is too low before battle.
         """
+        if not self.is_calculate:
+            return
+
         method = self.config.Fleet_FleetOrder
         if method == 'fleet1_all_fleet2_standby':
             battle = (battle, 0)
@@ -141,6 +118,8 @@ class GemsFarming(CampaignRun, Dock):
                 return GemsEmotion(config=self.config)
 
         self.campaign = GemsCampaign(device=self.campaign.device, config=self.campaign.config)
+        if not self.change_vanguard:
+            self.campaign.config.override(Emotion_Mode='ignore')
         self.campaign.config.override(EnemyPriority_EnemyScaleBalanceWeight='S1_enemy_first')
 
     @property
@@ -255,8 +234,10 @@ class GemsFarming(CampaignRun, Dock):
         if check_button is None:
             check_button = self.fleet_check_button
         if check_button == page_fleet.check_button:
-            self.ui_back(check_button=FLEET_DETAIL_CHECK)
-        self.ui_back(check_button=check_button)
+            self.ui_back(check_button=[FLEET_DETAIL_CHECK, page_fleet.check_button])
+            self.ui_back(check_button=page_fleet.check_button)
+        else:
+            self.ui_back(check_button=check_button)
 
     def find_candidates(self, templates, scanner: ShipScanner, output=False):
         """
@@ -325,7 +306,7 @@ class GemsFarming(CampaignRun, Dock):
     @Config.when(Campaign_Mode='normal')
     def flagship_change_execute(self):
         self.ui_enter_ship(FLEET_ENTER_FLAGSHIP, long_click=False)
-        candidate = self.get_common_rarity_cv()
+        candidate = self.get_common_rarity_cv(min_emotion=self.min_emotion)
         if candidate:
             ship = max(candidate, key=lambda s: (s.level, s.emotion))
             self._new_fleet_emotion = min(ship.emotion, self._new_fleet_emotion) if self._new_fleet_emotion else ship.emotion
@@ -401,13 +382,6 @@ class GemsFarming(CampaignRun, Dock):
             self.ui_enter_ship(button, long_click=True)
             self.ship_equipment_take_on()
             self.ui_leave_ship()
-
-        if self.change_vanguard_equip:
-            logger.hr('Mount vanguard equipments', level=2)
-            self.fleet_enter_ship(FLEET_DETAIL_ENTER)
-            self.apply_equip_code()
-            self.fleet_back()
-
 
         return success
 
