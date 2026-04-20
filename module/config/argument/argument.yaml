@@ -800,6 +800,10 @@ EventStory:
     type: checkbox
     value: false
     option: [ true, false ]
+FleetStats:
+  SavePath:
+    type: input
+    value: './stats/fleet_stats.json'
 Benchmark:
   DeviceType:
     value: emulator

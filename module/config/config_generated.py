@@ -473,6 +473,9 @@ class GeneratedConfig:
     # Group `EventStory`
     EventStory_SkipBattle = False  # True, False
 
+    # Group `FleetStats`
+    FleetStats_SavePath = './stats/fleet_stats.json'
+
     # Group `Benchmark`
     Benchmark_DeviceType = 'emulator'  # emulator, plone_cloud_with_adb, phone_cloud_without_adb, android_phone, android_phone_vmos
     Benchmark_TestScene = 'screenshot_click'  # screenshot_click, screenshot, click

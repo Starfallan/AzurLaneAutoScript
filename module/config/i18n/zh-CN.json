@@ -286,6 +286,10 @@
       "name": "活动剧情",
       "help": ""
     },
+    "FleetStats": {
+      "name": "舰队科技统计",
+      "help": ""
+    },
     "Benchmark": {
       "name": "性能测试",
       "help": ""
@@ -2710,6 +2714,16 @@
       "help": "",
       "True": "已启用",
       "False": "False"
+    }
+  },
+  "FleetStats": {
+    "_info": {
+      "name": "舰队科技统计",
+      "help": "扫描船坞内所有舰船的名字与等级，保存为JSON文件"
+    },
+    "SavePath": {
+      "name": "输出路径",
+      "help": "JSON文件的保存路径"
     }
   },
   "Benchmark": {

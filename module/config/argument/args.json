@@ -9974,6 +9974,22 @@
       }
     }
   },
+  "FleetStats": {
+    "FleetStats": {
+      "SavePath": {
+        "type": "input",
+        "value": "./stats/fleet_stats.json"
+      }
+    },
+    "Storage": {
+      "Storage": {
+        "type": "storage",
+        "value": {},
+        "valuetype": "ignore",
+        "display": "disabled"
+      }
+    }
+  },
   "Benchmark": {
     "Benchmark": {
       "DeviceType": {

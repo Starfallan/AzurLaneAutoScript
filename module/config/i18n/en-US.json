@@ -286,6 +286,10 @@
       "name": "Event Story",
       "help": ""
     },
+    "FleetStats": {
+      "name": "Fleet Tech Stats",
+      "help": ""
+    },
     "Benchmark": {
       "name": "Performance Test",
       "help": ""
@@ -2710,6 +2714,16 @@
       "help": "",
       "True": "Enabled",
       "False": "False"
+    }
+  },
+  "FleetStats": {
+    "_info": {
+      "name": "Fleet Tech Stats",
+      "help": "Scan all ships in dock, record name and level, save to a JSON file"
+    },
+    "SavePath": {
+      "name": "Output Path",
+      "help": "Path where the JSON file will be saved"
     }
   },
   "Benchmark": {

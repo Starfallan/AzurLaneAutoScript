@@ -2147,6 +2147,14 @@
       "Storage": {}
     }
   },
+  "FleetStats": {
+    "FleetStats": {
+      "SavePath": "./stats/fleet_stats.json"
+    },
+    "Storage": {
+      "Storage": {}
+    }
+  },
   "Benchmark": {
     "Benchmark": {
       "DeviceType": "emulator",

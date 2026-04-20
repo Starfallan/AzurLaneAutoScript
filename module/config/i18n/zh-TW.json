@@ -286,6 +286,10 @@
       "name": "活動劇情",
       "help": ""
     },
+    "FleetStats": {
+      "name": "艦隊科技統計",
+      "help": ""
+    },
     "Benchmark": {
       "name": "性能測試",
       "help": ""
@@ -2710,6 +2714,16 @@
       "help": "",
       "True": "已启用",
       "False": "False"
+    }
+  },
+  "FleetStats": {
+    "_info": {
+      "name": "艦隊科技統計",
+      "help": "掃描船塢內所有艦船的名字與等級，儲存為JSON檔案"
+    },
+    "SavePath": {
+      "name": "輸出路徑",
+      "help": "JSON檔案的儲存路徑"
     }
   },
   "Benchmark": {

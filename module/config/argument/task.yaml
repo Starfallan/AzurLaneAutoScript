@@ -366,6 +366,8 @@ Tool:
       - OpsiDaemon
     EventStory:
       - EventStory
+    FleetStats:
+      - FleetStats
     Benchmark:
       - Benchmark
     AzurLaneUncensored:

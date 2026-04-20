@@ -431,6 +431,10 @@ class AzurLaneAutoScript:
         from module.eventstory.eventstory import EventStory
         EventStory(config=self.config, device=self.device, task="EventStory").run()
 
+    def fleet_stats(self):
+        from module.fleet_stats.fleet_stats import FleetStats
+        FleetStats(config=self.config, device=self.device, task="FleetStats").run()
+
     def azur_lane_uncensored(self):
         from module.daemon.uncensored import AzurLaneUncensored
         AzurLaneUncensored(config=self.config, device=self.device, task="AzurLaneUncensored").run()
