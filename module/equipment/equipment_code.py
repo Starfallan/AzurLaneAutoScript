@@ -124,7 +124,8 @@ class EquipmentCodeHandler(StorageHandler):
             return False
         d.send_keys(text=code, clear=True)
         d.send_action(code="done")
-        for _ in self.loop(timeout=10):
+        self.device.sleep((0.3, 0.5))
+        for _ in self.loop(timeout=10, skip_first=False):
             _, shown = d.current_ime()
             if shown:
                 continue
